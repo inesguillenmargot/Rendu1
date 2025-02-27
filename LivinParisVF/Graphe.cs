@@ -135,7 +135,7 @@ public class Graphe
     /*public void AfficherGraphe()
     {
         Application.Run(new GraphVisualizer(this));
-    }*/
+    }*///https://github.com/inesguillenmargot/LivinParisVF.git
     public Dictionary<int, Noeud> GetListeAdjacence()
     {
         return listeAdjacence;
