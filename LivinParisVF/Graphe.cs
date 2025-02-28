@@ -80,10 +80,15 @@ public class Graphe
     
     public bool EstConnexe()
     {
+        if (listeAdjacence.Count == 0) return false; // Si le graphe est vide, il n'est pas connexe
+
         List<int> visite = new List<int>();
-        ProfondeurSansAffichage(1, visite); /// Utilisation d'une version sans affichage
-        return visite.Count == listeAdjacence.Count;
+        int premierNoeud = listeAdjacence.Keys.First(); // Prendre un nœud de départ
+        ProfondeurSansAffichage(premierNoeud, visite);
+
+        return visite.Count == nbNoeuds; // Vérifie si tous les nœuds sont visités
     }
+
 
     private void ProfondeurSansAffichage(int noeud, List<int> visite)
     {
