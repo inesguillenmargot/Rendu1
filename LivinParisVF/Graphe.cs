@@ -1,6 +1,4 @@
 ﻿namespace LivinParisVF;
-using SkiaSharp;
-using System.Drawing;
 
 public class Graphe
 {
@@ -17,7 +15,7 @@ public class Graphe
     
     public void AjouterLien(int a, int b)
     {
-        // Ajout dans la liste d'adjacence
+        /// Ajout dans la liste d'adjacence
         if (!listeAdjacence.ContainsKey(a))
             listeAdjacence[a] = new Noeud(a);
         if (!listeAdjacence.ContainsKey(b))
@@ -26,14 +24,14 @@ public class Graphe
         listeAdjacence[a].Voisins.Add(b);
         listeAdjacence[b].Voisins.Add(a);
         
-        // Ajout dans la matrice d'adjacence
+        /// Ajout dans la matrice d'adjacence
         matriceAdjacence[a, b] = 1;
         matriceAdjacence[b, a] = 1;
     }
     
     public void ParcoursLargeur(int depart)
     {
-        HashSet<int> visite = new HashSet<int>();
+        List<int> visite = new List<int>();
         Queue<int> file = new Queue<int>();
         
         file.Enqueue(depart);
@@ -60,13 +58,13 @@ public class Graphe
     
     public void ParcoursProfondeur(int depart)
     {
-        HashSet<int> visite = new HashSet<int>();
+        List<int> visite = new List<int>();
         Console.Write("Parcours en profondeur : ");
         Profondeur(depart, visite);
         Console.WriteLine();
     }
     
-    private void Profondeur(int noeud, HashSet<int> visite)
+    private void Profondeur(int noeud, List<int> visite)
     {
         visite.Add(noeud);
         Console.Write(noeud + " ");
@@ -82,9 +80,22 @@ public class Graphe
     
     public bool EstConnexe()
     {
-        HashSet<int> visite = new HashSet<int>();
-        Profondeur(1, visite);
+        List<int> visite = new List<int>();
+        ProfondeurSansAffichage(1, visite); /// Utilisation d'une version sans affichage
         return visite.Count == listeAdjacence.Count;
+    }
+
+    private void ProfondeurSansAffichage(int noeud, List<int> visite)
+    {
+        visite.Add(noeud);
+    
+        foreach (var voisin in listeAdjacence[noeud].Voisins)
+        {
+            if (!visite.Contains(voisin))
+            {
+                ProfondeurSansAffichage(voisin, visite);
+            }
+        }
     }
 
     public void AnalyserGraphe()
@@ -95,47 +106,67 @@ public class Graphe
         {
             taille += noeud.Voisins.Count;
         }
-        taille /= 2; // Car chaque lien est compté deux fois
+        taille /= 2; /// Car chaque lien est compté deux fois
         
         Console.WriteLine("Ordre du graphe (nombre de sommets) : " + ordre);
-        Console.WriteLine("Taille du graphe (nombre d'aretes) : " + taille);
-        Console.WriteLine("Type du graphe : Non oriente, non pondere");
+        Console.WriteLine("Taille du graphe (nombre d'arêtes) : " + taille);
+        Console.WriteLine("Type du graphe : Non orienté, non pondéré");
     }
+
     public bool ContientCycle()
     {
-        HashSet<int> visite = new HashSet<int>();
+        List<int> visite = new List<int>();
+        Dictionary<int, int> parent = new Dictionary<int, int>(); // Stocke le parent de chaque nœud
+        List<int> cycle = new List<int>(); // Stocke le cycle détecté
+
         foreach (var noeud in listeAdjacence.Keys)
         {
             if (!visite.Contains(noeud))
             {
-                if (Profondeur_DetectionCycle(noeud, -1, visite))
+                if (Profondeur_DetectionCycle(noeud, -1, visite, parent, cycle))
+                {
+                    Console.WriteLine("Le graphe contient un cycle.");
+                    Console.WriteLine("Cycle détecté : " + string.Join(" -> ", cycle));
                     return true;
+                }
             }
         }
+
+        Console.WriteLine("Le graphe ne contient pas de cycle.");
         return false;
     }
-    
-    private bool Profondeur_DetectionCycle(int noeud, int parent, HashSet<int> visite)
+
+    private bool Profondeur_DetectionCycle(int noeud, int parent, List<int> visite, Dictionary<int, int> parents, List<int> cycle)
     {
         visite.Add(noeud);
+        parents[noeud] = parent; // Stocke le parent du nœud actuel
+
         foreach (var voisin in listeAdjacence[noeud].Voisins)
         {
             if (!visite.Contains(voisin))
             {
-                if (Profondeur_DetectionCycle(voisin, noeud, visite))
+                if (Profondeur_DetectionCycle(voisin, noeud, visite, parents, cycle))
                     return true;
             }
-            else if (voisin != parent) // Il y a un cycle si un voisin est visité et que ce n'est pas le parent, 
+            else if (voisin != parent) // Cycle détecté
             {
+                // Reconstruire le cycle
+                cycle.Clear();
+                int current = noeud;
+                while (current != -1 && current != voisin)
+                {
+                    cycle.Add(current);
+                    current = parents[current];
+                }
+                cycle.Add(voisin);
+                cycle.Reverse(); // Remet le cycle dans l'ordre
+
                 return true;
             }
         }
         return false;
     }
-    /*public void AfficherGraphe()
-    {
-        Application.Run(new GraphVisualizer(this));
-    }*///https://github.com/inesguillenmargot/LivinParisVF.git
+
     public Dictionary<int, Noeud> GetListeAdjacence()
     {
         return listeAdjacence;

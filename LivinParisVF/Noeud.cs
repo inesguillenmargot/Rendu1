@@ -1,6 +1,4 @@
 ﻿namespace LivinParisVF;
-//using SkiaSharp;
-using System.Drawing;
 
 public class Noeud
 {

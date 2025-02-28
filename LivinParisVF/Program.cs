@@ -6,7 +6,7 @@ class Program
 {
     static void Main()
     {
-        Graphe graphe = new Graphe(34); // Nombre de membres (34)
+        Graphe graphe = new Graphe(34); /// Nombre de membres (34)
         
         int[][] liens = {
             new int[] {2,1}, new int[] {3,1}, new int[] {4,1}, new int[] {5,1}, new int[] {6,1},
@@ -33,20 +33,20 @@ class Program
             graphe.AjouterLien(lien[0], lien[1]);
         }
 
-        // Affichage des 2 parcours (profondeur et largeur)
+        /// Affichage des 2 parcours (profondeur et largeur)
         graphe.ParcoursLargeur(1);
         graphe.ParcoursProfondeur(1);
         
-        // Vérification si connexe ou non
-        Console.WriteLine("Le graphe est connexe : " + (graphe.EstConnexe() ? "Oui" : "Non"));
+        /// Vérification si connexe ou non
+        Console.WriteLine("\nLe graphe est connexe : " + (graphe.EstConnexe() ? "Oui" : "Non"));
         
-        // Vérification si cycle ou non
-        Console.WriteLine("Le graphe contient un cycle : " + (graphe.ContientCycle() ? "Oui" : "Non"));
+        /// Vérification si cycle ou non
+        graphe.ContientCycle();
         
-        // Analyse des propriétés du graphe
+        /// Analyse des propriétés du graphe
         graphe.AnalyserGraphe();
         
-        // Lance la fenêtre Windows Forms
-        //graphe.AfficherGraphe(); 
+        GrapheVisualizer visualizer = new GrapheVisualizer(graphe);
+        visualizer.DessinerGraphe("graph.png");
     }
 }
